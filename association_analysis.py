@@ -25,11 +25,14 @@ df = df[~df['InvoiceNo'].str.contains('C')]
 # transaction per row with each product 1 hot encoded. 
 
 # France only
-basket = (df[df['Country'] =="France"]
-         .groupby(['InvoiceNo', 'Description'])['Quantity']
-          .sum().unstack().reset_index().fillna(0)
-          .set_index('InvoiceNo'))
+#basket = (df[df['Country'] =="France"]
+#         .groupby(['InvoiceNo', 'Description'])['Quantity']
+#          .sum().unstack().reset_index().fillna(0)
+#          .set_index('InvoiceNo'))
 
+basket = (df[df['Country'] =="France"]
+.pivot_table(index="InvoiceNo", columns="Description", 
+             values="Quantity", aggfunc="sum",fill_value=0) )
 
 print basket.head()
 
@@ -69,10 +72,13 @@ basket['ALARM CLOCK BAKELIKE RED'].sum()
 # is also interesting is to see how the combinations vary by country of 
 # purchase. Let’s check out what some popular combinations might be in Germany:
 
+#basket2 = (df[df['Country'] =="Germany"]
+#          .groupby(['InvoiceNo', 'Description'])['Quantity']
+#          .sum().unstack().reset_index().fillna(0)
+#          .set_index('InvoiceNo'))
 basket2 = (df[df['Country'] =="Germany"]
-          .groupby(['InvoiceNo', 'Description'])['Quantity']
-          .sum().unstack().reset_index().fillna(0)
-          .set_index('InvoiceNo'))
+.pivot_table(index="InvoiceNo", columns="Description", 
+             values="Quantity", aggfunc="sum",fill_value=0) )
 
 basket_sets2 = basket2.applymap(encode_units)
 basket_sets2.drop('POSTAGE', inplace=True, axis=1)
